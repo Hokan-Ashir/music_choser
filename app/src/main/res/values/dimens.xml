@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="add_song_button_padding">8dp</dimen>
+    <dimen name="add_song_layout_text_width">320dp</dimen>
+    <dimen name="add_song_layout_text_height">64dp</dimen>
+    <dimen name="add_song_layout_text_size">16sp</dimen>
+    <dimen name="song_picker_padding">128dp</dimen>
+    <dimen name="song_picker_width">128dp</dimen>
+    <dimen name="artist_picker_width">128dp</dimen>
+</resources>

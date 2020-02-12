@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Random Music Selector</string>
+    <string name="song_name_text_field_hint">Song name</string>
+    <string name="artist_name_text_field_hint">Artist name</string>
+</resources>
