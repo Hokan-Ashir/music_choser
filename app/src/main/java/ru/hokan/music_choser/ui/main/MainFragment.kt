@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import com.example.music_choser.R
 import kotlinx.android.synthetic.main.main_fragment.*
 import ru.hokan.music_choser.database.Database
-import ru.hokan.music_choser.database.song.SongWithArtist
+import ru.hokan.music_choser.database.song.ArtistWithSongs
 import ru.hokan.music_choser.di.MusicChoserApplication
 import ru.hokan.music_choser.ui.songs.add.AddSongFragment
 import javax.inject.Inject
@@ -57,11 +57,11 @@ class MainFragment : Fragment() {
     }
 
     private fun populatePickersWithData() {
-        val allSongs = SelectingSongsAsyncTask(database).execute().get()
-        val displayedSongs = allSongs.map { it.name!! }.toTypedArray()
-        setPickerData(song_picker, displayedSongs)
-        val displayedArtists = allSongs.map { it.artists!!.first().name }.toTypedArray()
+        val allArtists = SelectingSongsAsyncTask(database).execute().get()
+        val displayedArtists = allArtists.map { it.artist.name }.toTypedArray()
         setPickerData(artist_picker, displayedArtists)
+        val displayedSongs = allArtists.flatMap { it.songList }.map { it.name }.toTypedArray()
+        setPickerData(song_picker, displayedSongs)
     }
 
     private fun setPickerData(picker: NumberPicker, displayedData: Array<String>) {
@@ -72,10 +72,21 @@ class MainFragment : Fragment() {
 
     // TODO this should be easier
     class SelectingSongsAsyncTask(val database: Database) :
-        AsyncTask<Void, Void, List<SongWithArtist>>() {
-        override fun doInBackground(vararg params: Void?): List<SongWithArtist> {
-            val songDao = database.getSongDao()
-            return songDao.getAllSongsWithArtist()
+        AsyncTask<Void, Void, List<ArtistWithSongs>>() {
+        override fun doInBackground(vararg params: Void?): List<ArtistWithSongs> {
+            val artistDao = database.getArtistDao()
+            // TODO clear this up, upon calling this inside debugger, getting
+            // can be a reason of extremely excessive memory usage
+            /*
+            * 02-28 16:53:34.289 31321-31334/com.example.music_choser E/art: Tried to mark 0x7 not contained by any spaces
+02-28 16:53:34.289 31321-31334/com.example.music_choser E/art: Attempting see if it's a bad root
+02-28 16:53:34.289 31321-31334/com.example.music_choser E/art: Found invalid root: 0x7 with type RootJavaFrame
+02-28 16:53:34.289 31321-31334/com.example.music_choser A/art: art/runtime/gc/collector/mark_sweep.cc:381] Can't mark invalid object
+02-28 16:53:34.342 31321-31334/com.example.music_choser A/art: art/runtime/runtime.cc:284] Runtime aborting...
+02-28 16:53:34.342 31321-31334/com.example.music_choser A/art: art/runtime/runtime.cc:284] Aborting thread:
+02-28 16:53:34.342 31321-31334/com.example.music_choser A/art: art/runtime/runtime.cc:284] "GCDaemon" prio=5 tid=9 WaitingPerformingGc
+            * */
+            return artistDao.getAllArtistsWithSongs()
         }
     }
 }

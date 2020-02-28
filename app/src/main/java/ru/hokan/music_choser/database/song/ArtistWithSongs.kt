@@ -4,10 +4,10 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import ru.hokan.music_choser.database.artist.Artist
 
-data class SongWithArtist(
+data class ArtistWithSongs(
     @Embedded
-    val song: Song,
+    val artist: Artist,
 
-    @Relation(parentColumn = "songId", entityColumn = "artistId")
-    var artist: Artist
+    @Relation(parentColumn = "artistId", entityColumn = "songArtistId")
+    val songList: List<Song>
 )

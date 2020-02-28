@@ -71,15 +71,21 @@ class AddSongFragment : Fragment() {
             val songDao = database.getSongDao()
             AsyncTask.execute {
                 val artistName = add_song_artist_name.text.toString()
-                val existedArtist = artistDao.getAllArtistsWithName(artistName)
-                val artistId = if (existedArtist == null) {
-                    artistDao.addArtist(Artist(null, artistName))
+                val artistFromDB = artistDao.getArtistsWithName(artistName)
+                val artistId = if (artistFromDB != null) {
+                    artistFromDB.artistId
                 } else {
-                    existedArtist.id
+                    artistDao.addArtist(Artist(null, artistName))
                 }
 
                 val songName = add_song_song_name.text.toString()
-                songDao.addSong(Song(null, songName, artistId))
+                val isSongExists = songDao.getSongWithName(songName) != null
+                if (isSongExists) {
+                    // TODO print fancy error message that song exists
+                    return@execute
+                }
+
+                songDao.addSong(Song(null, songName, artistId!!))
 
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.background_layout, MainFragment.newInstance())
